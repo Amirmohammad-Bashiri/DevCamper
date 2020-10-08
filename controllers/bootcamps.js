@@ -4,7 +4,7 @@ const ErrorResponse = require("../utils/errorResponse")
 // @desc      Get all bootcamps
 // @rotue     GET /api/v1/bootcamps
 // @access    Public
-exports.getBootcamps = async (req, res) => {
+exports.getBootcamps = async (req, res, next) => {
   try {
     const bootcamps = await Bootcamp.find()
 
@@ -14,7 +14,7 @@ exports.getBootcamps = async (req, res) => {
       data: bootcamps,
     })
   } catch (err) {
-    res.status(400).json({ success: false })
+    next(err)
   }
 }
 
@@ -37,19 +37,14 @@ exports.getBootcamp = async (req, res, next) => {
     res.status(200).json({ success: true, data: bootcamp })
   } catch (err) {
     // res.status(400).json({ success: false })
-    next(
-      new ErrorResponse(
-        `Bootcamp could not be found with the id of ${req.params.id}`,
-        404
-      )
-    )
+    next(err)
   }
 }
 
 // @desc      Create Bootcamp
 // @rotue     POST /api/v1/bootcamps
 // @access    Private
-exports.createBootcamp = async (req, res) => {
+exports.createBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.create(req.body)
 
@@ -58,14 +53,14 @@ exports.createBootcamp = async (req, res) => {
       data: bootcamp,
     })
   } catch (err) {
-    res.status(400).json({ success: false })
+    next(err)
   }
 }
 
 // @desc      Update Bootcamp
 // @rotue     PUT /api/v1/bootcamps/:id
 // @access    Private
-exports.updateBootcamp = async (req, res) => {
+exports.updateBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -73,28 +68,38 @@ exports.updateBootcamp = async (req, res) => {
     })
 
     if (!bootcamp) {
-      return res.status(400).json({ success: false })
+      return next(
+        new ErrorResponse(
+          `Bootcamp could not be found with the id of ${req.params.id}`,
+          404
+        )
+      )
     }
 
     res.status(200).json({ success: true, data: bootcamp })
   } catch (err) {
-    res.status(400).json({ success: false })
+    next(err)
   }
 }
 
 // @desc      Delete Bootcamp
 // @rotue     DELETE /api/v1/bootcamps/:id
 // @access    Private
-exports.deleteBootcamp = async (req, res) => {
+exports.deleteBootcamp = async (req, res, next) => {
   try {
     const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id)
 
     if (!bootcamp) {
-      return res.status(400).json({ success: false })
+      return next(
+        new ErrorResponse(
+          `Bootcamp could not be found with the id of ${req.params.id}`,
+          404
+        )
+      )
     }
 
     res.status(200).json({ success: true, data: {} })
   } catch (err) {
-    res.status(400).json({ success: false })
+    next(err)
   }
 }
