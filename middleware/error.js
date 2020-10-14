@@ -14,6 +14,12 @@ const errorHandler = (err, req, res, next) => {
     error = new ErrorResponse(message, 404)
   }
 
+  // Mongoose duplication key
+  if (err.code === 11000) {
+    const message = "Duplicate value is not allowed"
+    error = new ErrorResponse(message, 400)
+  }
+
   res.status(error.statusCode || 500).json({
     success: false,
     error: error.message || "Server error",

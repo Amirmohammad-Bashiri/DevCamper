@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const slugify = require("slugify")
 
 const BootcampSchema = new mongoose.Schema({
   name: {
@@ -12,10 +13,7 @@ const BootcampSchema = new mongoose.Schema({
   description: {
     type: String,
     required: [true, "Please add a description"],
-    maxlength: [
-      500,
-      "Description can not be more than 500 characters",
-    ],
+    maxlength: [500, "Description can not be more than 500 characters"],
   },
   website: {
     type: String,
@@ -26,10 +24,7 @@ const BootcampSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    maxlength: [
-      20,
-      "Phone number can not be longer than 20 characters",
-    ],
+    maxlength: [20, "Phone number can not be longer than 20 characters"],
   },
   email: {
     type: String,
@@ -102,6 +97,12 @@ const BootcampSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+})
+
+// Create bootcamp slug from name
+BootcampSchema.pre("save", function (next) {
+  this.slug = slugify(this.name, { lower: true })
+  next()
 })
 
 module.exports = mongoose.model("Bootcamp", BootcampSchema)
