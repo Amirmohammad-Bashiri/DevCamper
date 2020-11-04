@@ -4,6 +4,7 @@ const {
   login,
   getMe,
   forgotPassword,
+  resetPassword,
 } = require("../controllers/auth")
 
 // Route Protection
@@ -18,5 +19,7 @@ router.post("/login", login)
 router.get("/me", protect, getMe)
 
 router.post("/forgotpassword", forgotPassword)
+
+router.put("/resetpassword/:resettoken", resetPassword)
 
 module.exports = router
